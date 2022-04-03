@@ -22,7 +22,7 @@
  
  
 # Preview
- - https://youtu.be/rr9UcGC40s8
+ - https://youtu.be/rr9UcGC40s8  
  In the preview the algorithm used for solving the maze was A*. You can change it by going to "Backtracking_Maze_Generator" function and change the function pointer passed to the path finder thread to any other function that implements different algorithm.
  
  # References
