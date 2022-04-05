@@ -1,0 +1,17 @@
+
+*.pdb
+*.ipdb
+*.iobj
+*.exe
+*.ilk
+*.obj
+*.tlog
+*.log
+*.recipe
+*.idb
+*.ipch
+*.opendb
+*.db-wal
+*.db-shm
+*.db
+.vs/Maze Generator/v16/.suo

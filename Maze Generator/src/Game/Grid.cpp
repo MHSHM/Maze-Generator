@@ -45,10 +45,6 @@ void Grid::Load_Data()
 	std::uniform_int_distribution<std::mt19937::result_type> dist_col(0, col_size - 2);
 	std::uniform_int_distribution<std::mt19937::result_type> dist_row(0, row_size - 2);
 
-	SceneNode* player = game->Create_Scene_Node(this, "player");
-	game->Add_Component(player, ComponentType::Transform);
-	game->Add_Component(player, ComponentType::Render);
-
 	grid.resize(row_size);
 
 	for (int i = 0; i < row_size; ++i)
