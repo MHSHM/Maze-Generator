@@ -70,7 +70,6 @@ bool Game::Init()
 
 	Load_Shaders();
 
-
 	return true;
 }
 

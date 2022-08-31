@@ -3,8 +3,8 @@
 #include <Scene.h>
 #include <mutex>
 
-#define TILE_WIDTH 5
-#define TILE_HEIGHT 5
+#define TILE_WIDTH 11
+#define TILE_HEIGHT 11
 
 class Grid : public Scene 
 {

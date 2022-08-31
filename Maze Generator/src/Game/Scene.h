@@ -5,9 +5,6 @@
 #include <SceneNode.h>
 #include <Actor.h>
 
-#define MAX_SCENE_NODES 50000
-#define MAX_ACTOR 50000
-
 
 class Scene
 {

@@ -11,5 +11,5 @@ out vec3 o_color;
 void main()
 {
 	gl_Position = u_orthoproj * vec4(in_position + in_translation, 1.0f);
-	o_color = in_color; 
+	o_color = in_color;
 }

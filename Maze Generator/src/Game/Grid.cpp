@@ -92,6 +92,7 @@ void Grid::Load_Data()
 	destination_row = std::min(destination_row, row_size - 2);
 	destination_col = std::min(destination_col, col_size - 2);
 	*/
+
 	start = grid[1][1];
 	destination = grid[row_size - 2][col_size - 2];
 
@@ -187,7 +188,7 @@ void Grid::Generate_Random_Maze(uint16_t difficulty)
 		int x = dist_row(rng);
 		int y = dist_col(rng);
 
-		SceneNode* node = grid[x][y]; 
+		SceneNode* node = grid[x][y];
 
 		if (node == start || node == destination)
 		{
@@ -197,7 +198,7 @@ void Grid::Generate_Random_Maze(uint16_t difficulty)
 		NodeState* state = node->actor->Get_Component<NodeState>(); 
 		state->is_blocked = true;
 
-		//std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	std::thread path_finder(&Grid::Find_Path_A_Star, this, start, destination);
@@ -214,10 +215,11 @@ void Grid::Backtracking_Maze_Generator(SceneNode* start)
 	{
 		SceneNode* current = st.top(); 
 		NodeState* current_state = current->actor->Get_Component<NodeState>();
-		std::vector<SceneNode*> neighbours; 
-		std::vector<SceneNode*> odd_neighbours;
 		current_state->is_visited = true;
-		current_state->is_blocked = false; 
+		current_state->is_blocked = false;
+
+		std::vector<SceneNode*> neighbours;
+		std::vector<SceneNode*> odd_neighbours;
 		neighbours.reserve(4);
 		odd_neighbours.reserve(4);
 
@@ -260,8 +262,8 @@ void Grid::Backtracking_Maze_Generator(SceneNode* start)
 
 void Grid::Find_Path_DFS(SceneNode* start, SceneNode* destination)
 {
-	std::stack<SceneNode*> st; 
-	st.push(start); 
+	std::stack<SceneNode*> st;
+	st.push(start);
 
 	while (!st.empty())
 	{
@@ -272,9 +274,10 @@ void Grid::Find_Path_DFS(SceneNode* start, SceneNode* destination)
 			break;
 		}
 
-		NodeState* state = current->actor->Get_Component<NodeState>(); 
-		state->is_visited_path = true;
-		st.pop(); 
+		st.pop();
+
+		NodeState* state = current->actor->Get_Component<NodeState>();
+		state->is_visited_path = true; 
 
 		for (int i = 0; i < 4; ++i)
 		{
@@ -283,10 +286,11 @@ void Grid::Find_Path_DFS(SceneNode* start, SceneNode* destination)
 			if (new_i >= 0 && new_i < row_size && new_j >= 0 && new_j < col_size)
 			{
 				NodeState* neigh_state = grid[new_i][new_j]->actor->Get_Component<NodeState>();
+
 				if (!neigh_state->is_visited_path && !neigh_state->is_blocked)
 				{
 					neigh_state->parent = current; 
-					st.push(grid[new_i][new_j]); 
+					st.push(grid[new_i][new_j]);
 				}
 			}
 		}
@@ -301,31 +305,33 @@ void Grid::Find_Path_DFS(SceneNode* start, SceneNode* destination)
 void Grid::Find_Path_BFS(SceneNode* start, SceneNode* destination)
 {
 	std::queue<SceneNode*> q;
-	q.push(start); 
+	q.push(start);
 
 	while (!q.empty()) 
 	{
 		SceneNode* current = q.front(); 
+		q.pop();
 
 		if (current == destination)
 		{
 			break;
 		}
 
-		NodeState* state = current->actor->Get_Component<NodeState>();
-		state->is_visited_path = true; 
-		q.pop();
+		NodeState* current_node_state = current->actor->Get_Component<NodeState>();
 
 		for (int i = 0; i < 4; ++i)
 		{
-			int new_i = state->row + di[i];
-			int new_j = state->col + dj[i];
+			int new_i = current_node_state->row + di[i];
+			int new_j = current_node_state->col + dj[i];
+
 			if (new_i >= 0 && new_i < row_size && new_j >= 0 && new_j < col_size)
 			{
 				NodeState* neigh_state = grid[new_i][new_j]->actor->Get_Component<NodeState>();
+
 				if (!neigh_state->is_visited_path && !neigh_state->is_blocked)
 				{
 					neigh_state->parent = current;
+					neigh_state->is_visited_path = true;
 					q.push(grid[new_i][new_j]);
 				}
 			}
@@ -335,17 +341,17 @@ void Grid::Find_Path_BFS(SceneNode* start, SceneNode* destination)
 
 	std::thread path_construct(&Grid::Construct_Path, this, destination, start);
 	path_construct.detach();
-
 }
 
 void Grid::Find_Path_Dijkstra(SceneNode* start, SceneNode* destination)
 {
 	auto comp = [](const NodeState* left, const NodeState* right) 
 	{
-		return left->distance < right->distance; 
+		return left->distance < right->distance;
 	};
 
 	NodeState* start_node_state = start->actor->Get_Component<NodeState>();
+	// shortest distance from start -> start
 	start_node_state->distance = 0;
 
 	std::multiset < NodeState*, decltype(comp)> st(comp); 
@@ -360,14 +366,13 @@ void Grid::Find_Path_Dijkstra(SceneNode* start, SceneNode* destination)
 			break; 
 		}
 
-		current_node_state->is_visited_path = true;
-
 		st.erase(st.begin());
 
 		for (int i = 0; i < 4; ++i)
 		{
 			int new_i = current_node_state->row + di[i];
 			int new_j = current_node_state->col + dj[i];
+			
 			if (new_i >= 0 && new_i < row_size && new_j >= 0 && new_j < col_size)
 			{
 				NodeState* neigh_state = grid[new_i][new_j]->actor->Get_Component<NodeState>();
@@ -377,9 +382,9 @@ void Grid::Find_Path_Dijkstra(SceneNode* start, SceneNode* destination)
 					continue; 
 				}
 
-				uint32_t distance = current_node_state->distance + 1; 
+				uint32_t distance = current_node_state->distance + 1;
 
-				auto iter = st.find(neigh_state); 
+				auto iter = st.find(neigh_state);
 
 				if (iter == st.end()) 
 				{
@@ -391,12 +396,14 @@ void Grid::Find_Path_Dijkstra(SceneNode* start, SceneNode* destination)
 				{
 					if (distance < neigh_state->distance) 
 					{
-						st.erase(iter); 
+						st.erase(iter);
 						neigh_state->distance = distance; 
 						neigh_state->parent = current_node_state->owner->scene_node; 
-						st.insert(neigh_state); 
+						st.insert(neigh_state);
 					}
 				}
+
+				neigh_state->is_visited_path = true;
 			}
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));

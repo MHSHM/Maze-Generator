@@ -1,7 +1,7 @@
 #pragma once
 
-#define WINDOW_WIDTH 1395
-#define WINDOW_HEIGHT 815
+#define WINDOW_WIDTH 495
+#define WINDOW_HEIGHT 495
 
 #define MAX_SCENES 10
 #define MAX_SCENE_NODES 50000

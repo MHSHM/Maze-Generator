@@ -22,7 +22,6 @@ void Renderer::Initialize()
 	glGenBuffers(1, &renderer_data.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, renderer_data.vbo);
 	glBufferData(GL_ARRAY_BUFFER, quad.vertices.size() * sizeof(glm::vec3), (void*)&quad.vertices[0], GL_STATIC_DRAW);
-	
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
 
@@ -65,7 +64,7 @@ void Renderer::Draw_Instances()
 	game->shaders_table["shader"].Bind();
 	game->shaders_table["shader"].Set_Matrix4_Uniform("u_orthoproj", game->renderer.shader_data.ortho_proj); 
 
-	glBindVertexArray(renderer_data.vao); 
+	glBindVertexArray(renderer_data.vao);
 
 	glDrawElementsInstanced(GL_TRIANGLES, quad.indices.size(), GL_UNSIGNED_INT, (void*)quad.indices[0],
 		instance_count);
